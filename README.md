@@ -94,13 +94,13 @@ Desenvolvemos scripts para que não precise de abrir o terminal manualmente semp
 
 ### No Windows:
 
-1. Localize o arquivo `iniciar_servidor.bat` na pasta do projeto.
+1. Localize o arquivo `iniciar_servidor.bat` na pasta do sistema.
 2. Dê um **duplo clique** no arquivo.
 3. A "mágica" acontece: o servidor iniciará automaticamente.
 
 ### No Linux/macOS:
 
-1. Abra o terminal na pasta do projeto.
+1. Abra o terminal na pasta do sistema.
 2. Execute o comando: `./iniciar_servidor.sh`
 3. Ou simplesmente dê um duplo clique no arquivo (se o seu sistema permitir execução de scripts via interface gráfica).
 

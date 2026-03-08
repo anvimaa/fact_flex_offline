@@ -12,9 +12,9 @@ Antes de iniciar a instalação, certifique-se de que os seguintes softwares est
 2. **NPM (Node Package Manager)** – Instalado automaticamente junto com o Node.js.
 3. **PostgreSQL** – Sistema de gestão de base de dados utilizado pela aplicação.
 4. **Terminal do Sistema** – Pode ser utilizado:
-    - **PowerShell** (Windows)
-    - **Prompt de Comando (CMD)**
-    - **Terminal Linux ou macOS**
+   - **PowerShell** (Windows)
+   - **Prompt de Comando (CMD)**
+   - **Terminal Linux ou macOS**
 
 ---
 

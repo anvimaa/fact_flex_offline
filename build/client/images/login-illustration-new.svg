@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="900" height="600" viewBox="0 0 900 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Definições de gradientes e padrões -->
+    <defs>
+        <!-- Gradiente principal -->
+        <linearGradient id="mainGradient" x1="0" y1="0" x2="900" y2="600">
+            <stop offset="0%" style="stop-color:#4338ca;stop-opacity:1"/>
+            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1"/>
+        </linearGradient>
+        
+        <!-- Gradiente para elementos -->
+        <linearGradient id="elementGradient" x1="0" y1="0" x2="300" y2="300">
+            <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1"/>
+            <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1"/>
+        </linearGradient>
+        
+        <!-- Padrão de grade -->
+        <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#6366f1" stroke-width="0.5" opacity="0.2"/>
+        </pattern>
+    </defs>
+
+    <!-- Fundo -->
+    <rect width="900" height="600" fill="url(#mainGradient)"/>
+    <rect width="900" height="600" fill="url(#grid)"/>
+
+    <!-- Círculos decorativos de fundo -->
+    <circle cx="100" cy="100" r="200" fill="#4338ca" opacity="0.1"/>
+    <circle cx="800" cy="500" r="250" fill="#6366f1" opacity="0.1"/>
+
+    <!-- Container principal -->
+    <g transform="translate(450, 300)">
+        <!-- Formas geométricas flutuantes -->
+        <g transform="translate(-200, -150)">
+            <rect x="0" y="0" width="80" height="80" rx="20" fill="url(#elementGradient)" opacity="0.9" transform="rotate(-15)"/>
+            <circle cx="60" cy="60" r="10" fill="white" opacity="0.6"/>
+        </g>
+
+        <g transform="translate(150, 100)">
+            <rect x="0" y="0" width="60" height="60" rx="15" fill="url(#elementGradient)" opacity="0.7" transform="rotate(15)"/>
+            <path d="M15,30 L45,30 M30,15 L30,45" stroke="white" stroke-width="4" stroke-linecap="round"/>
+        </g>
+
+        <!-- Elemento central -->
+        <g>
+            <!-- Círculo de fundo -->
+            <circle cx="0" cy="0" r="120" fill="white" opacity="0.1"/>
+            <circle cx="0" cy="0" r="100" fill="white" opacity="0.2"/>
+            
+            <!-- Ícone de usuário estilizado -->
+            <g transform="translate(0, -20)">
+                <circle cx="0" cy="0" r="30" fill="white"/>
+                <circle cx="0" cy="-5" r="15" fill="url(#elementGradient)"/>
+                <path d="M-25,25 Q0,50 25,25" stroke="url(#elementGradient)" stroke-width="8" fill="none"/>
+            </g>
+
+            <!-- Linhas decorativas -->
+            <g transform="translate(0, 40)">
+                <rect width="60" height="6" rx="3" fill="white" opacity="0.8" transform="translate(-30, 0)"/>
+                <rect width="40" height="6" rx="3" fill="white" opacity="0.6" transform="translate(-20, 15)"/>
+            </g>
+        </g>
+
+        <!-- Elementos flutuantes adicionais -->
+        <g transform="translate(-150, 50)">
+            <circle cx="0" cy="0" r="20" fill="white" opacity="0.4"/>
+            <circle cx="0" cy="0" r="10" fill="url(#elementGradient)"/>
+        </g>
+
+        <g transform="translate(120, -80)">
+            <rect width="40" height="40" rx="10" fill="white" opacity="0.3" transform="rotate(30)"/>
+            <rect width="20" height="20" rx="5" fill="url(#elementGradient)" transform="translate(10,10) rotate(30)"/>
+        </g>
+    </g>
+
+    <!-- Partículas de fundo -->
+    <g fill="white" opacity="0.5">
+        <circle cx="100" cy="200" r="2"/>
+        <circle cx="800" cy="100" r="2"/>
+        <circle cx="750" cy="400" r="2"/>
+        <circle cx="200" cy="500" r="2"/>
+        <circle cx="300" cy="150" r="2"/>
+    </g>
+
+    <!-- Linhas de conexão -->
+    <g stroke="white" stroke-width="1" opacity="0.2">
+        <path d="M100,200 L800,100"/>
+        <path d="M750,400 L200,500"/>
+        <path d="M300,150 L750,400"/>
+    </g>
+
+    <!-- Ondas decorativas -->
+    <g transform="translate(0,500)">
+        <path d="M0,0 Q225,50 450,0 T900,0" fill="none" stroke="white" stroke-width="2" opacity="0.1"/>
+        <path d="M0,20 Q225,70 450,20 T900,20" fill="none" stroke="white" stroke-width="2" opacity="0.05"/>
+    </g>
+</svg>

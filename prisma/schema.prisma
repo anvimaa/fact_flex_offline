@@ -1,0 +1,710 @@
+// Não mudar nada neste aqruivo. Excepto do datasource
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Empresa {
+  id                  String               @id @default(uuid())
+  nome                String
+  nif                 String               @unique
+  endereco            String
+  email               String?
+  telefone            String?
+  website             String?
+  pais                String?
+  cidade              String?
+  logo                String?
+  privateKeyPem       String?              @db.Text
+  publicKeyPem        String?              @db.Text
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  clientes            Cliente[]
+  facturas            Factura[]
+  users               User[] // Usuários associados à empresa
+  itens               Item[]
+  produtos            Produto[]
+  fornecedores        Fornecedor[]
+  subscriptions       Subscription[]
+  payments            Payment[]
+  saftExportHistories SaftExportHistory[]
+  logs                Log[]
+  recibos             Recibo[]
+  categorias          Categoria[]
+  vendas              Venda[]
+  movimentosEstoque   MovimentoEstoque[]
+  DocumentoFiscal     DocumentoFiscal[]
+  ItemDocumento       ItemDocumento[]
+  SequenciaDocumento  SequenciaDocumento[]
+  ConfiguracaoAGT     ConfiguracaoAGT?
+
+  parceiroId                 String?
+  parceiro                   Parceiro?  @relation(fields: [parceiroId], references: [id])
+  codigoRecomendacaoAplicado String?
+  comissoes                  Comissao[]
+  seriesAGT                  SerieAGT[]
+
+  @@map("empresa")
+}
+
+model User {
+  id                String             @id
+  name              String
+  email             String
+  emailVerified     Boolean
+  active            Boolean?           @default(true)
+  role              String?            @default("user")
+  image             String?
+  empresaId         String? // Novo campo
+  empresa           Empresa?           @relation(fields: [empresaId], references: [id]) // Nova relação
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  Session           Session[]
+  Account           Account[]
+  Subscription      Subscription[]
+  logs              Log[]
+  vendas            Venda[]
+  movimentosEstoque MovimentoEstoque[]
+  DocumentoFiscal   DocumentoFiscal[]
+  LogDocumento      LogDocumento[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @map("sessionToken")
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@map("session")
+}
+
+model Account {
+  id           String    @id
+  accountId    String
+  providerId   String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken  String?
+  refreshToken String?
+  idToken      String?
+  expiresAt    DateTime?
+  password     String?
+
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+
+  createdAt DateTime?
+  updatedAt DateTime?
+
+  @@map("verification")
+}
+
+model Cliente {
+  id              String            @id @default(uuid())
+  empresaId       String
+  empresa         Empresa           @relation(fields: [empresaId], references: [id])
+  tipo            String            @default("SINGULAR")
+  nome            String
+  nif             String
+  endereco        String
+  email           String?
+  pais            String?
+  caixaPostal     String?
+  cidade          String?
+  website         String?
+  telefone        String?
+  telemovel       String?
+  fax             String?
+  facturas        Factura[]
+  vendas          Venda[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  DocumentoFiscal DocumentoFiscal[]
+
+  @@map("cliente")
+}
+
+model Item {
+  id            String   @id @default(uuid())
+  codigo        String
+  descricao     String
+  quantidade    Int
+  precoUnitario Decimal  @db.Decimal(18, 2)
+  taxa          Decimal  @db.Decimal(18, 2)
+  desconto      Decimal  @db.Decimal(18, 2)
+  facturaId     String
+  motivoIsento  String?
+  factura       Factura  @relation(fields: [facturaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  empresa       Empresa  @relation(fields: [empresaId], references: [id])
+  empresaId     String
+
+  @@map("item")
+}
+
+model Factura {
+  id         String   @id @default(uuid())
+  data       DateTime
+  vencimento String?
+  vref       String
+  numero     String
+  serie      String
+  moeda      String
+  retencao   Decimal  @db.Decimal(18, 2)
+  observacao String?
+  estado     String?  @default("rascunho")
+  tipo       String?  @default("factura")
+  referencia String?
+  clienteId  String
+  cliente    Cliente  @relation(fields: [clienteId], references: [id])
+  items      Item[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  empresaId  String
+  empresa    Empresa  @relation(fields: [empresaId], references: [id])
+  recibos    Recibo[]
+
+  @@map("factura")
+}
+
+model Categoria {
+  id        String   @id @default(uuid())
+  nome      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  empresaId String?
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+
+  produtos Produto[]
+
+  @@map("categoria")
+}
+
+model Produto {
+  id            String             @id @default(uuid())
+  codigo        String
+  descricao     String
+  quantidade    Int
+  precoUnitario Decimal            @db.Decimal(18, 2)
+  taxa          Taxa?              @relation(fields: [taxaId], references: [id])
+  taxaId        String?
+  tipo          String?            @default("PRODUTO")
+  desconto      Decimal            @db.Decimal(5, 2)
+  isento        String?            @default("n")
+  motivoIsento  String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  empresa       Empresa            @relation(fields: [empresaId], references: [id])
+  empresaId     String
+  fornecedorId  String?
+  fornecedor    Fornecedor?        @relation(fields: [fornecedorId], references: [id])
+  categoria     Categoria?         @relation(fields: [categoriaId], references: [id])
+  categoriaId   String?
+  itemsVenda    ItemVenda[]
+  movimentos    MovimentoEstoque[]
+  ItemDocumento ItemDocumento[]
+
+  @@map("produto")
+}
+
+model Taxa {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tipo       String?
+  regiao     String? @default("AO")
+  codigo     String?
+  descricao  String
+  valor      Decimal @db.Decimal(5, 2)
+  observacao String?
+
+  produtos Produto[]
+
+  @@map("taxa")
+}
+
+model Fornecedor {
+  id        String    @id @default(uuid())
+  nome      String
+  nif       String
+  endereco  String
+  telefone  String?
+  email     String?
+  produtos  Produto[]
+  empresa   Empresa   @relation(fields: [empresaId], references: [id])
+  empresaId String
+
+  @@map("fornecedor")
+}
+
+model Subscription {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  planType   String // "basic" or "professional"
+  periodType String // "mensual" or "anual"
+  status     String // "PENDING", "ACTIVE", "REJECTED", "EXPIRED"
+  startDate  DateTime? @default(now())
+  endDate    DateTime? @default(now())
+  payments   Payment[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  empresa    Empresa?  @relation(fields: [empresaId], references: [id])
+  empresaId  String?
+
+  @@map("subscription")
+}
+
+model Payment {
+  id              String       @id @default(uuid())
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+  amount          Decimal      @db.Decimal(18, 2)
+  paymentMethod   String // "DEPOSIT" or "TRANSFER"
+  paymentDate     DateTime
+  proofFile       String // Path to the proof file
+  status          String // "PENDING", "APPROVED", "REJECTED"
+  rejectionReason String? // Reason if rejected
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  empresa         Empresa?     @relation(fields: [empresaId], references: [id])
+  empresaId       String?
+  comissao        Comissao?
+
+  @@map("payment")
+}
+
+model SaftExportHistory {
+  id        String   @id @default(uuid())
+  empresaId String?
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  period    String
+  fileName  String
+  status    String // "PENDING", "COMPLETED", "FAILED"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("saft_export_history")
+}
+
+model Log {
+  id        String   @id @default(uuid())
+  empresaId String?
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  action    String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("log")
+}
+
+model Recibo {
+  id             String   @id @default(uuid())
+  dataPagamento  DateTime
+  numero         String
+  referencia     String?
+  totalImporto   Decimal  @db.Decimal(18, 2)
+  totalFacturado Decimal  @db.Decimal(18, 2)
+  retencao       String?  @default("n")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  empresaId String
+  empresa   Empresa  @relation(fields: [empresaId], references: [id])
+  factura   Factura? @relation(fields: [facturaId], references: [id])
+  facturaId String?
+
+  @@map("recibo")
+}
+
+/**
+ * MODULO DE VENDAS
+ */
+model Venda {
+  id           String      @id @default(uuid())
+  codigo       String      @unique // "VENDA-2024-001"
+  cliente      Cliente?    @relation(fields: [clienteId], references: [id])
+  clienteId    String?
+  usuario      User        @relation(fields: [usuarioId], references: [id])
+  usuarioId    String
+  empresa      Empresa     @relation(fields: [empresaId], references: [id])
+  empresaId    String
+  itens        ItemVenda[]
+  status       String
+  total        Decimal     @db.Decimal(18, 2)
+  desconto     Decimal?    @default(0) @db.Decimal(18, 2)
+  observacao   String?
+  facturaRef   String?
+  facturaId    String?
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
+
+  @@map("venda")
+}
+
+/**
+ * Itens de uma venda
+ */
+model ItemVenda {
+  id            String   @id @default(uuid())
+  quantidade    Int
+  precoUnitario Decimal  @db.Decimal(18, 2)
+  desconto      Decimal? @default(0) @db.Decimal(18, 2) // Percentual de desconto (0-100)
+  total         Decimal  @db.Decimal(18, 2)
+  vendaId       String
+  produtoId     String
+  criadoEm      DateTime @default(now())
+
+  produto Produto @relation(fields: [produtoId], references: [id])
+  venda   Venda   @relation(fields: [vendaId], references: [id])
+
+  @@map("item_venda")
+}
+
+model MovimentoEstoque {
+  id         String   @id @default(uuid())
+  produtoId  String
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+  empresaId  String
+  empresa    Empresa  @relation(fields: [empresaId], references: [id])
+  usuarioId  String
+  usuario    User     @relation(fields: [usuarioId], references: [id])
+  tipo       String // "ENTRADA" ou "SAIDA"
+  quantidade Int
+  motivo     String? // "COMPRA", "AJUSTE", "VENDA", "DEVOLUCAO", etc.
+  observacao String?
+  criadoEm   DateTime @default(now())
+
+  @@map("movimento_estoque")
+}
+
+/**
+ * SISTEMA DE DOCUMENTOS FISCAIS - AGT (Decreto 71/25 RJF)
+ */
+
+// Enums para Documentos Fiscais
+enum TipoDocumento {
+  FACTURA
+  FACTURA_RECIBO
+  FACTURA_SIMPLIFICADA
+  FACTURA_GLOBAL
+  FACTURA_ADIANTAMENTO // Para adiantamentos
+  FACTURA_PROFORMA
+  NOTA_CREDITO
+  NOTA_DEBITO
+  GUIA_REMESSA
+  RECIBO
+}
+
+enum StatusDocumento {
+  RASCUNHO
+  EMITIDO
+  ENVIADO_AGT
+  VALIDADO_AGT
+  REJEITADO_AGT
+  ANULADO
+  RECTIFICADO
+  PENDENTE_ENVIO
+}
+
+enum RegimeFiscal {
+  NORMAL
+  SIMPLIFICADO
+  ELECTRONICO
+}
+
+// Modelo Unificado de Documento Fiscal
+model DocumentoFiscal {
+  id String @id @default(uuid())
+
+  // Identificação do Documento
+  tipoDocumento    TipoDocumento
+  numero           String // Ex: "FT 2024/001"
+  serie            String // Ex: "FT", "NC", "ND", "GR"
+  codigoSerie      String? // O código real da série na AGT
+  numeroSequencial Int // Número sequencial por tipo/série
+
+  // Datas
+  dataEmissao    DateTime  @default(now())
+  dataOperacao   DateTime? // Data da operação comercial
+  dataVencimento DateTime?
+
+  // Partes Envolvidas
+  empresaId String
+  empresa   Empresa  @relation(fields: [empresaId], references: [id])
+  clienteId String?
+  cliente   Cliente? @relation(fields: [clienteId], references: [id])
+
+  // Dados Comerciais
+  moeda         String  @default("AOA")
+  subtotal      Decimal @db.Decimal(18, 2)
+  totalDesconto Decimal @default(0) @db.Decimal(18, 2)
+  totalImpostos Decimal @default(0) @db.Decimal(18, 2)
+  total         Decimal @db.Decimal(18, 2)
+  retencao      Decimal @default(0) @db.Decimal(18, 2)
+
+  // Observações e Referências
+  observacao         String?
+  formaPagamento     String? // "NUMERARIO", "MULTICAIXA", "TRANSFERENCIA", "CREDITO"
+  motivoEmissao      String? // Para notas de crédito/débito
+  motivoAnulacao     String? // Para notas de crédito/débito
+  referenciaOriginal String? // Referência ao documento original
+
+  // Documento Original (para notas)
+  documentoOriginalId    String?
+  documentoOriginal      DocumentoFiscal?  @relation("DocumentoOriginal", fields: [documentoOriginalId], references: [id], onDelete: Restrict)
+  documentosRelacionados DocumentoFiscal[] @relation("DocumentoOriginal")
+
+  // Status e Estado
+  status StatusDocumento @default(RASCUNHO)
+  estado String? // "finalizado", "anulado", etc.
+
+  // Facturação Electrónica
+  regimeFiscal       RegimeFiscal @default(NORMAL)
+  hashDocumento      String? // Hash SHA-256 do documento
+  assinaturaDigital  String? // Assinatura digital
+  qrCode             String? // QR Code para validação
+  codigoValidacaoAGT String? // Código retornado pela AGT
+  dataEnvioAGT       DateTime?
+  dataValidacaoAGT   DateTime?
+  payloadAGT         String? // JSON do payload enviado
+  respostaAGT        String? // JSON da resposta AGT
+  tentativasEnvio    Int          @default(0)
+
+  // Prova de Aceitação (Notas de Crédito)
+  provaAceitacao String? // Path do arquivo ou base64
+  tipoProva      String? // "email", "assinatura", "documento"
+
+  // Guia de Remessa
+  localCarga          String?
+  localDescarga       String?
+  dataSaida           DateTime?
+  dataChegadaPrevista DateTime?
+  transportadorNome   String?
+  transportadorNIF    String?
+  matriculaVeiculo    String?
+
+  // Itens do Documento
+  itens ItemDocumento[]
+
+  // Logs e Auditoria
+  logs LogDocumento[]
+
+  // Metadados
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String
+  usuario   User     @relation(fields: [createdBy], references: [id])
+
+  // Soft Delete (não permitir deleção física)
+  deletedAt DateTime?
+  deletedBy String?
+
+  @@unique([empresaId, codigoSerie, numeroSequencial])
+  @@index([tipoDocumento, empresaId, status])
+  @@index([numero])
+  @@index([dataEmissao])
+  @@map("documento_fiscal")
+}
+
+// Itens de Documento Fiscal
+model ItemDocumento {
+  id          String          @id @default(uuid())
+  documentoId String
+  documento   DocumentoFiscal @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+
+  // Produto/Serviço
+  codigo        String
+  descricao     String
+  quantidade    Int
+  unidade       String  @default("UN")
+  precoUnitario Decimal @db.Decimal(18, 2)
+
+  // Descontos e Impostos
+  desconto      Decimal @default(0) @db.Decimal(5, 2) // Percentual
+  descontoValor Decimal @default(0) @db.Decimal(18, 2)
+  taxa          Decimal @default(0) @db.Decimal(5, 2) // Percentual de imposto
+  taxaValor     Decimal @default(0) @db.Decimal(18, 2)
+  motivoIsencao String?
+
+  // Totais
+  subtotal Decimal @db.Decimal(18, 2)
+  total    Decimal @db.Decimal(18, 2)
+
+  // Referência ao Produto (opcional)
+  produtoId String?
+  produto   Produto? @relation(fields: [produtoId], references: [id])
+
+  // Metadados
+  empresaId String
+  empresa   Empresa  @relation(fields: [empresaId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("item_documento")
+}
+
+// Logs Imutáveis de Documentos
+model LogDocumento {
+  id          String          @id @default(uuid())
+  documentoId String
+  documento   DocumentoFiscal @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+
+  // Tipo de Ação
+  acao      String // "CRIADO", "EMITIDO", "ENVIADO_AGT", "ANULADO", etc.
+  descricao String
+
+  // Dados da Ação
+  dadosAnteriores String? // JSON do estado anterior
+  dadosNovos      String? // JSON do novo estado
+
+  // Usuário
+  usuarioId String
+  usuario   User   @relation(fields: [usuarioId], references: [id])
+
+  // IP e User Agent
+  ipAddress String?
+  userAgent String?
+
+  // Timestamp
+  createdAt DateTime @default(now())
+
+  @@index([documentoId, createdAt])
+  @@map("log_documento")
+}
+
+// Controle de Numeração Sequencial
+model SequenciaDocumento {
+  id        String  @id @default(uuid())
+  empresaId String
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  serie        String // "FT", "NC", "ND", "GR"
+  codigoSerie  String? // Gerada pela AGT
+  ano          Int
+  mes          Int
+  ultimoNumero Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([empresaId, serie, ano, codigoSerie])
+  @@map("sequencia_documento")
+}
+
+// Configuração de Facturação Electrónica AGT
+model ConfiguracaoAGT {
+  id        String  @id @default(uuid())
+  empresaId String  @unique
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  // Credenciais AGT
+  nifContribuinte    String
+  certificadoDigital String? // Certificado em PEM
+  chavePrivada       String? // Chave privada encriptada
+
+  // Configurações
+  regimeFiscal   RegimeFiscal @default(NORMAL)
+  urlApiAGT      String       @default("https://agt.gov.ao/api/v1")
+  tokenAcesso    String?
+  tokenExpiracao DateTime?
+
+  // Contingência
+  modoContingencia       Boolean   @default(false)
+  motivoContingencia     String?
+  dataInicioContingencia DateTime?
+
+  // Metadados
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("configuracao_agt")
+}
+
+// SISTEMA DE PARCEIROS E COMISSÕES
+model Parceiro {
+  id                  String     @id @default(uuid())
+  nome                String
+  email               String     @unique
+  telefone            String?
+  codigoRecomendacao  String     @unique
+  percentagemComissao Decimal    @default(10.00) @db.Decimal(5, 2)
+  ativo               Boolean    @default(true)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  empresas            Empresa[]
+  comissoes           Comissao[]
+
+  @@map("parceiro")
+}
+
+model Comissao {
+  id                  String    @id @default(uuid())
+  parceiroId          String
+  parceiro            Parceiro  @relation(fields: [parceiroId], references: [id])
+  empresaId           String
+  empresa             Empresa   @relation(fields: [empresaId], references: [id])
+  paymentId           String    @unique
+  payment             Payment   @relation(fields: [paymentId], references: [id])
+  plano               String
+  periodo             String
+  valorPago           Decimal   @db.Decimal(18, 2)
+  percentagemAplicada Decimal   @db.Decimal(5, 2)
+  valorComissao       Decimal   @db.Decimal(18, 2)
+  status              String    @default("PENDENTE") // PENDENTE, APURADA, PAGA, CANCELADA
+  dataApuramento      DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@map("comissao")
+}
+
+// SISTEMA DE PARCEIROS E COMISSÕES
+model SerieAGT {
+  id                 String @id @default(uuid())
+  seriesCode         String
+  seriesYear         String
+  documentType       String
+  seriesStatus       String
+  seriesCreationDate String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  empresa   Empresa  @relation(fields: [empresaId], references: [id])
+  empresaId String
+
+  @@unique([empresaId, seriesYear, seriesCode])
+  @@map("series_agt")
+}

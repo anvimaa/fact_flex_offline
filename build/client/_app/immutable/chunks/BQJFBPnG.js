@@ -1,0 +1,1 @@
+import{a5 as y,w as o,ao as u,ap as _,x as t,af as g,ag as i,D as l,C as n,F as p,an as m}from"./CoUivBMM.js";function C(d,r){let a=null,f=t;var s;if(t){a=p;for(var e=m(document.head);e!==null&&(e.nodeType!==g||e.data!==d);)e=i(e);if(e===null)l(!1);else{var E=i(e);e.remove(),n(E)}}t||(s=document.head.appendChild(y()));try{o(()=>r(s),u|_)}finally{f&&(l(!0),n(a))}}export{C as h};

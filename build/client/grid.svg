@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="none" stroke="#444" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- grelha 8x8, sem fundo -->
+  <rect x="0" y="0" width="320" height="320" fill="url(#grid)" />
+
+  <!-- contorno externo -->
+  <rect x="0.5" y="0.5" width="319" height="319" fill="none" stroke="#000" stroke-width="1"/>
+</svg>

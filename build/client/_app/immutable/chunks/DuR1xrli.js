@@ -1,0 +1,1 @@
+function u(n){return n}function r(n){const t=n-1;return t*t*t+1}function a(n){return Math.sin(-13*(n+1)*Math.PI/2)*Math.pow(2,-10*n)+1}function c(n){return--n*n*n*n*n+1}export{r as c,a as e,u as l,c as q};

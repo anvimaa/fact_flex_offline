@@ -1,6 +1,6 @@
-### Guia de Instalação e Inicialização do Sistema (Ambiente Local)
+# 🚀 FACT FLEXI - Guia de Instalação (Ambiente Offline)
 
-Este guia explica os passos necessários para configurar e iniciar o sistema localmente no computador do cliente.
+Este guia prático foi elaborado para orientar a configuração e execução local do **FACT FLEXI** no computador do cliente.
 
 ---
 
@@ -95,5 +95,34 @@ Se tudo estiver configurado corretamente, o servidor será iniciado e o sistema 
 - Sempre que houver alterações na estrutura da base de dados, o comando abaixo pode ser executado novamente:
 
 ```
-npx prisma db push
+npx prisma@6 db push
 ```
+
+---
+
+## 6. Suporte e Versão Online
+
+### 📡 Como solicitar a Versão Online?
+
+A versão offline do **FACT FLEXI** é ideal para operações sem dependência de internet. Se desejar migrar para a **versão online**, que permite acesso remoto, sincronização em tempo real e backups automáticos na nuvem, entre em contato com a nossa equipa técnica.
+
+### 📞 Contactos para Dúvidas e Suporte
+
+Se encontrar dificuldades durante a instalação ou precisar de assistência técnica:
+
+- **Email:** amantentesoft@gmail.com | anvimaa@gmail.com
+- **Telefone/WhatsApp:** (+244) 934 342 795
+- **Horário de Atendimento:** Segunda a Sexta, das 08h às 18h, Sabado das 09h às 14h.
+- **Web site:** www.factflexi.com
+
+---
+
+## 📝 Informações de Copyright e Licenciamento
+
+© 2026 **AMANTENTE SOFT - COMERCIO & SERVIÇOS, LDA**. Todos os direitos reservados.
+
+- **Produtor:** AMANTENTE SOFT - COMERCIO & SERVIÇOS, LDA
+- **Nº da Licença de Software (AGT):** FE/183/AGT/2026
+- **Desenvolvedor:** António Mantente (@anvimaa)
+
+_Este software é certificado pela AGT e o seu uso está sujeito aos termos da licença adquirida._

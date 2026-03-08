@@ -74,9 +74,9 @@ Este comando irá:
 
 ---
 
-## 4. Inicializar o Servidor
+## 4. Inicialização Manual do Servidor (Alternativo)
 
-Depois da base de dados sincronizada, o servidor pode ser iniciado.
+Se preferir não usar os scripts de inicialização rápida, pode iniciar o servidor manualmente:
 
 No terminal, ainda dentro da **pasta raiz do sistema**, execute:
 
@@ -85,6 +85,24 @@ node build
 ```
 
 Se tudo estiver configurado corretamente, o servidor será iniciado e o sistema ficará disponível para uso.
+
+---
+
+## 🚀 Inicialização Rápida (Recomendado)
+
+Desenvolvemos scripts para que não precise de abrir o terminal manualmente sempre que quiser iniciar o sistema.
+
+### No Windows:
+
+1. Localize o arquivo `iniciar_servidor.bat` na pasta do projeto.
+2. Dê um **duplo clique** no arquivo.
+3. A "mágica" acontece: o servidor iniciará automaticamente.
+
+### No Linux/macOS:
+
+1. Abra o terminal na pasta do projeto.
+2. Execute o comando: `./iniciar_servidor.sh`
+3. Ou simplesmente dê um duplo clique no arquivo (se o seu sistema permitir execução de scripts via interface gráfica).
 
 ---
 
